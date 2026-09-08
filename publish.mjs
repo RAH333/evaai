@@ -10,16 +10,29 @@
 // call.
 
 import { loadEnv, publishAgent, readAgent, reportErrors, required } from './lib.mjs'
+import fs from 'fs' // Dynamic file system library for prompt injection
 
 reportErrors()
 loadEnv()
-required('ASSEMBLYAI_API_KEY', 'get one at https://www.assemblyai.com/dashboard/api-keys')
+required('ASSEMBLYAI_API_KEY', 'get one at https://assemblyai.com')
 
 const name = process.env.AGENT || 'minimal'
 const agent = readAgent(name)
+
+// Inject the prompt from an independent markdown file to bypass strict JSON rules
+try {
+  agent.system_prompt = fs.readFileSync(`./agents/prompt.md`, 'utf8');
+} catch (e) {
+  try {
+    agent.system_prompt = fs.readFileSync(`prompt.md`, 'utf8');
+  } catch (err) {
+    console.log('\nWarning: prompt.md file was not found. Using internal fallback setting.');
+  }
+}
+
 const { id, created, saved, key } = await publishAgent(agent, { name })
 
-console.log(`${created ? 'Created' : 'Updated'} "${agent.name}" from agents/${name}.jsonc`)
+console.log(`${created ? 'Created' : 'Updated'} "${agent.name}" from agents/${name}`)
 console.log(`${key}=${id}`)
 if (created && !saved) {
   console.log(`Could not write .env. Set ${key} yourself to keep updating this agent.`)
@@ -33,7 +46,7 @@ if (created && !saved) {
 const unanswered = (agent.tools ?? []).filter((tool) => !tool.http).map((t) => t.name)
 if (unanswered.length) {
   console.log(
-    `\nWarning: ${unanswered.join(', ')} ${unanswered.length > 1 ? 'have' : 'has'} no http block, ` +
+    `\nWarning: ${unanswered.join(', ')} ${unanswered.length > 1 ? 'have' : 'has'} no http configuration, ` +
       'so nothing answers it on a phone call.'
   )
 }
