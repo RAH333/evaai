@@ -30,7 +30,7 @@ if [ ! -f .env ]; then
     #fi
     # Write secrets seamlessly across environment spaces
     echo "Writing environment configurations..."
-    cat << EOF > .env
+    cat <<EOF > .env
     ASSEMBLYAI_API_KEY=$AAI_KEY
 EOF    
     # Mirror env layout into backend configurations space
