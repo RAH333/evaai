@@ -32,7 +32,8 @@ if [ ! -f .env ]; then
     echo "Writing environment configurations..."
     cat <<EOF > .env
     ASSEMBLYAI_API_KEY=$AAI_KEY
-EOF    
+    EOF
+    
     # Mirror env layout into backend configurations space
     # cp .env backend/.env
     echo " Configuration secrets successfully bound to root and backend paths."
