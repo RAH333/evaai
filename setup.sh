@@ -24,17 +24,15 @@ if [ ! -f .env ]; then
     cp .env.example .env    # ASSEMBLYAI_API_KEY
     read -p " Enter your AssemblyAI API Secret Key: " AAI_KEY
     #read -p " Enter your AssemblyAI Voice Agent ID string: " AGENT_ID
-    #read -p " Enter your localized fulfillment secret key (or hit Enter for default): " WEBHOOK_SEC
-    
+    #read -p " Enter your localized fulfillment secret key (or hit Enter for default): " WEBHOOK_SEC  
     #if [ -z "$WEBHOOK_SEC" ]; then
         #WEBHOOK_SEC="default_secret_key"
     #fi
-    
     # Write secrets seamlessly across environment spaces
     echo "Writing environment configurations..."
     cat << EOF > .env
     ASSEMBLYAI_API_KEY=$AAI_KEY
-    EOF    
+EOF    
     # Mirror env layout into backend configurations space
     # cp .env backend/.env
     echo " Configuration secrets successfully bound to root and backend paths."
